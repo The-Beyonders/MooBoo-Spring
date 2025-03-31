@@ -60,7 +60,7 @@ public class UserEntity {
                 .userName(user.getUserName())
                 .password(user.getPassword())
                 .provider(user.getProvider())
-                .providerId(user.getProvider_id())
+                .providerId(user.getProviderId())
                 .email(user.getEmail())
                 .image(user.getImage())
                 .userRole(user.getUserRole())

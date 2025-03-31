@@ -68,7 +68,7 @@ public class User {
                 .providerId(userEntity.getProviderId())
                 .email(userEntity.getEmail())
                 .image(userEntity.getImage())
-                .userRole(UserRole.USER)
+                .userRole(userEntity.getUserRole())
                 .build();
     }
 
@@ -81,6 +81,7 @@ public class User {
                 .provider(createOAuth2User.getProvider())
                 .providerId(createOAuth2User.getProviderId())
                 .image(createOAuth2User.getImage())
+                .userRole(UserRole.USER)
                 .build();
     }
 }
