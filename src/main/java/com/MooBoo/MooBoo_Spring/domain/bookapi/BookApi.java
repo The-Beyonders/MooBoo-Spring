@@ -1,7 +1,7 @@
-package com.MooBoo.MooBoo_Spring.domain.bookapi;
+package com.MooBoo.MooBoo_Spring.domain;
 
-import com.MooBoo.MooBoo_Spring.adapter.port.outbound.external.dto.BookItem;
-import com.MooBoo.MooBoo_Spring.adapter.port.inbound.api.dto.BookSearchResponse;
+import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookItem;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.BookSearchResponse;
 import lombok.*;
 
 /**
