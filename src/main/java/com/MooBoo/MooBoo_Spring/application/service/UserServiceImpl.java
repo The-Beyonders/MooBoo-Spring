@@ -19,12 +19,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User loadUserByProviderId(String providedId) {
-        Optional<User> userByProviderId = userRepository.findUserByProviderId(providedId);
-        if (userByProviderId.isEmpty()) {
-            return null;
-        }
-        return userByProviderId.get();
+    public Optional<User> loadUserByProviderId(String providedId) {
+        return userRepository.findUserByProviderId(providedId);
     }
 
     @Override
