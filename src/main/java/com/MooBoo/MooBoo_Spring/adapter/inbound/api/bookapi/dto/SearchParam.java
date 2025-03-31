@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.adapter.port.inbound.api.dto;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.api.dto;
 
 import lombok.Data;
 

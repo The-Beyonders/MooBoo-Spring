@@ -1,16 +1,18 @@
-package com.MooBoo.MooBoo_Spring.adapter.port.outbound.external.dto;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * 외부 API 로부터 데이터를 저장할 DTO
+ * API 응답을 위한 DTO
  */
 @Data
 @Builder
-public class BookItem {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookSearchResponse {
     private String isbn13;
     private String title;
     private String description;
@@ -18,8 +20,7 @@ public class BookItem {
     private String cover;
     private String publisher;
     private String pubDate;
-    @JsonProperty("subInfo")
-    private BookInfo bookInfo;
-
+    private String itemPage;
 
 }
+

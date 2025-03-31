@@ -1,9 +1,9 @@
-package com.MooBoo.MooBoo_Spring.adapter.port.inbound.api;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.api;
 
 import com.MooBoo.MooBoo_Spring.adapter.dto.Result;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.BookApiService;
-import com.MooBoo.MooBoo_Spring.adapter.port.inbound.api.dto.BookSearchResponse;
-import com.MooBoo.MooBoo_Spring.adapter.port.inbound.api.dto.SearchParam;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.api.dto.BookSearchResponse;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.api.dto.SearchParam;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;

@@ -1,7 +1,7 @@
-package com.MooBoo.MooBoo_Spring.adapter.port.outbound.external;
+package com.MooBoo.MooBoo_Spring.adapter.port.outbound.external.bookapi;
 
 import com.MooBoo.MooBoo_Spring.domain.bookapi.BookApi;
-import com.MooBoo.MooBoo_Spring.adapter.port.outbound.external.dto.BookApiResponse;
+import com.MooBoo.MooBoo_Spring.adapter.port.outbound.external.bookapi.dto.BookApiResponse;
 import com.MooBoo.MooBoo_Spring.adapter.port.inbound.api.dto.SearchParam;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.BookApiClient;
 import com.MooBoo.MooBoo_Spring.domain.bookapi.exception.BookApiBadRequestException;
