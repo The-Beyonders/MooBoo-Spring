@@ -81,7 +81,7 @@ public class User {
                 .provider(createOAuth2User.getProvider())
                 .providerId(createOAuth2User.getProviderId())
                 .image(createOAuth2User.getImage())
-                .userRole(UserRole.USER)
+                .userRole(UserRole.ROLE_USER)
                 .build();
     }
 }
