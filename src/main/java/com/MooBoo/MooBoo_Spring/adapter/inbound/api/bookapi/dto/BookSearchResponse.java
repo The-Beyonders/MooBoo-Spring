@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.adapter.inbound.api.dto;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

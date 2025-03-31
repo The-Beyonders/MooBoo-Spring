@@ -1,7 +1,7 @@
-package com.MooBoo.MooBoo_Spring.application.port.inbound;
+package com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi;
 
 import com.MooBoo.MooBoo_Spring.domain.bookapi.BookApi;
-import com.MooBoo.MooBoo_Spring.adapter.inbound.api.dto.SearchParam;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.SearchParam;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

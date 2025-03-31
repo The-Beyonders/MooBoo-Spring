@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.domain.exception;
+package com.MooBoo.MooBoo_Spring.domain.bookapi.exception;
 
 public class BookApiBadRequestException extends RuntimeException {
     public BookApiBadRequestException(String message) {

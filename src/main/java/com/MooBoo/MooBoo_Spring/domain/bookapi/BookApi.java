@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.domain;
+package com.MooBoo.MooBoo_Spring.domain.bookapi;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookItem;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.BookSearchResponse;
