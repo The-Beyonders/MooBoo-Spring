@@ -1,6 +1,8 @@
 package com.MooBoo.MooBoo_Spring.common.config;
 
+import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.CustomOAuth2SuccessHandler;
 import com.MooBoo.MooBoo_Spring.application.service.CustomOAuth2UserService;
+import com.MooBoo.MooBoo_Spring.common.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -16,6 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,11 +38,13 @@ public class SecurityConfig {
                         .requestMatchers("/", "/api/v1/login/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
+                        .successHandler(customOAuth2SuccessHandler)
                 );
 
         http
