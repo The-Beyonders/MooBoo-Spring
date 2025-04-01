@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class OAuth2UserInfoFactory {
 
-    public static OAuth2UserInfo getOAuthUserInfo(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
+    public OAuth2UserInfo getOAuthUserInfo(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
         switch(registrationId) {
             case("kakao") -> {
                 String provider_id = attributes.get(userNameAttributeName).toString();
