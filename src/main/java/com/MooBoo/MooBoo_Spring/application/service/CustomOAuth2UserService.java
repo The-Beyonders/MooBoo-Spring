@@ -1,10 +1,11 @@
 package com.MooBoo.MooBoo_Spring.application.service;
 
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
-import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.OAuth2UserInfoFactory;
+import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.OAuth2UserInfoFactoryImpl;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
 
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.UserService;
+import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2UserInfoFactory;
 import com.MooBoo.MooBoo_Spring.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserService userService;
+    private final OAuth2UserInfoFactory oAuth2UserInfoFactory;
 
     /**
      * loadUser
@@ -51,7 +53,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         // 팩토리 클래스를 이용해 여러 기관에서 인증 가능하도록 구현함
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory
+        OAuth2UserInfo oAuth2UserInfo = oAuth2UserInfoFactory
                 .getOAuthUserInfo(registrationId, userNameAttributeName, attributes);
 
         String providerId = oAuth2UserInfo.getProviderId();
@@ -65,7 +67,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             user = userService.loadUserByProviderId(providerId);
         }
 
-        String role = user.get().getUserName();
+        String role = user.get().getUserRole().toString();
 
         /**
          * oAuth2User를 그대로 넘기면 인증은 되지만 권한이 없음

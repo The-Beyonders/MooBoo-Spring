@@ -1,10 +1,13 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
+import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2UserInfoFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-public class OAuth2UserInfoFactory {
+@Component
+public class OAuth2UserInfoFactoryImpl implements OAuth2UserInfoFactory {
 
     public OAuth2UserInfo getOAuthUserInfo(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
         switch(registrationId) {
