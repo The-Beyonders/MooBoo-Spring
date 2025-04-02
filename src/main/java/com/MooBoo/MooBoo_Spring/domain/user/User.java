@@ -21,7 +21,6 @@ public class User {
     private String provider;
     private String providerId;
     private String email;
-
     private List<UserRole> userRoles = new ArrayList<>();
 
     /**

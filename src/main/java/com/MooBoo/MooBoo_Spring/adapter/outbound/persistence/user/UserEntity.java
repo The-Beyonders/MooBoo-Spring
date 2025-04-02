@@ -13,7 +13,6 @@ import java.util.List;
  * 필독 !!
  * Getter를 Public으로 열어두지만, 비즈니스 로직 작성 및 변환 로직 작성 외에 사용하지 말 것 !!
  */
-
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

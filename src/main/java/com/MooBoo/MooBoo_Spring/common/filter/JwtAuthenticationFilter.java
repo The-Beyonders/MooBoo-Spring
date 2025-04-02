@@ -5,8 +5,6 @@ import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvid
 import com.MooBoo.MooBoo_Spring.domain.TokenStatus;
 import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

@@ -1,7 +1,6 @@
 package com.MooBoo.MooBoo_Spring.application.service;
 
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
-import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserEntity;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.UserService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.persistence.UserRepository;
 import com.MooBoo.MooBoo_Spring.domain.user.User;

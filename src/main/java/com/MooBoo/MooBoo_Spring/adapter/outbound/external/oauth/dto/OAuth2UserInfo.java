@@ -3,7 +3,6 @@ package com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Getter
 @NoArgsConstructor
 public class OAuth2UserInfo {

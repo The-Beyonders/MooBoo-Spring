@@ -1,10 +1,9 @@
 package com.MooBoo.MooBoo_Spring.adapter.inbound.api.login;
 
-import com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt.dto.CreateAccessToken;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
-
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2SuccessUserInfoFactory;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

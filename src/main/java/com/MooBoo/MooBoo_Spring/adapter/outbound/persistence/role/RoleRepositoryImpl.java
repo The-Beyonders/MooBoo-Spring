@@ -1,7 +1,6 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.role;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.RoleEntity;
-import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserRole;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.persistence.RoleRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
