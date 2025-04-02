@@ -44,9 +44,6 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "image")
-    private String image;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRoleEntity> userRoles = new ArrayList<>();
 
@@ -66,7 +63,6 @@ public class UserEntity {
                 .provider(user.getProvider())
                 .providerId(user.getProviderId())
                 .email(user.getEmail())
-                .image(user.getImage())
                 .userRoles(new ArrayList<>())
                 .build();
     }

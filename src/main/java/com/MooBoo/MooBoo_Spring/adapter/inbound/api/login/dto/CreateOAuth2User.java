@@ -11,5 +11,4 @@ public class CreateOAuth2User {
     private String userName;
     private String provider;
     private String providerId;
-    private String image;
 }

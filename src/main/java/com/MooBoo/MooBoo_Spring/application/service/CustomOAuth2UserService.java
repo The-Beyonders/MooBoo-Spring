@@ -61,8 +61,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         Optional<User> user = userService.loadUserByProviderId(providerId);
         if (user.isEmpty()) {
-            // FIXME 나중에 이미지 가져오는 경우 이미지도 추가해줄 것
-            userService.signUpUser(new CreateOAuth2User(nickname, registrationId, providerId, ""));
+            userService.signUpUser(new CreateOAuth2User(nickname, registrationId, providerId));
             user = userService.loadUserByProviderId(providerId);
         }
 

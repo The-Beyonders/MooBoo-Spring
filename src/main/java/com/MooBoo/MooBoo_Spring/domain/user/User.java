@@ -21,7 +21,7 @@ public class User {
     private String provider;
     private String providerId;
     private String email;
-    private String image;
+
     private List<UserRole> userRoles = new ArrayList<>();
 
     /**
@@ -52,9 +52,6 @@ public class User {
         return email;
     }
 
-    public String getImage() {
-        return image;
-    }
 
     public List<UserRole> getUserRoles() {
         return userRoles;
@@ -69,7 +66,6 @@ public class User {
                 .provider(userEntity.getProvider())
                 .providerId(userEntity.getProviderId())
                 .email(userEntity.getEmail())
-                .image(userEntity.getImage())
                 .userRoles(new ArrayList<>())
                 .build();
 
@@ -88,7 +84,6 @@ public class User {
                 .userName(createOAuth2User.getUserName())
                 .provider(createOAuth2User.getProvider())
                 .providerId(createOAuth2User.getProviderId())
-                .image(createOAuth2User.getImage())
                 .userRoles(new ArrayList<>())
                 .build();
         user.getUserRoles().add(UserRole.ROLE_USER);
