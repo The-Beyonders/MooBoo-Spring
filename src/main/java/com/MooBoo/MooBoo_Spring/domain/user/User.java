@@ -5,6 +5,9 @@ import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserEntity;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserRole;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 유저 도메인
  */
@@ -19,7 +22,7 @@ public class User {
     private String providerId;
     private String email;
     private String image;
-    private UserRole userRole;
+    private List<UserRole> userRoles = new ArrayList<>();
 
     /**
      * 필독 !!
@@ -53,14 +56,13 @@ public class User {
         return image;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public List<UserRole> getUserRoles() {
+        return userRoles;
     }
-
 
     //== 변환 메서드 ==//
     public static User to(UserEntity userEntity) {
-        return User.builder()
+        User user = User.builder()
                 .userId(userEntity.getUserId())
                 .userName(userEntity.getUserName())
                 .password(userEntity.getPassword())
@@ -68,21 +70,29 @@ public class User {
                 .providerId(userEntity.getProviderId())
                 .email(userEntity.getEmail())
                 .image(userEntity.getImage())
-                .userRole(userEntity.getUserRole())
+                .userRoles(new ArrayList<>())
                 .build();
+
+        userEntity.getUserRoles().forEach(userRoleEntity -> {
+            user.getUserRoles().add(userRoleEntity.getRole().getUserRole());
+            }
+        );
+        return user;
     }
 
     /**
      * CreateOAuth2User -> User
      */
     public static User to(CreateOAuth2User createOAuth2User) {
-        return User.builder()
+        User user = User.builder()
                 .userName(createOAuth2User.getUserName())
                 .provider(createOAuth2User.getProvider())
                 .providerId(createOAuth2User.getProviderId())
                 .image(createOAuth2User.getImage())
-                .userRole(UserRole.ROLE_USER)
+                .userRoles(new ArrayList<>())
                 .build();
+        user.getUserRoles().add(UserRole.ROLE_USER);
+        return user;
     }
 }
 

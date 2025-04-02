@@ -1,12 +1,11 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user;
 
-import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
 import com.MooBoo.MooBoo_Spring.domain.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 유저 영속성 엔티티
@@ -14,11 +13,13 @@ import lombok.NoArgsConstructor;
  * 필독 !!
  * Getter를 Public으로 열어두지만, 비즈니스 로직 작성 및 변환 로직 작성 외에 사용하지 말 것 !!
  */
-@Entity
+
 @Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "users")
 public class UserEntity {
 
     @Id
@@ -46,9 +47,12 @@ public class UserEntity {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRoleEntity> userRoles = new ArrayList<>();
+
+    public void addUserRoles(UserRoleEntity userRole) {
+        this.getUserRoles().add(userRole);
+    }
 
     //== 변환 메서드 ==//
     /**
@@ -63,7 +67,7 @@ public class UserEntity {
                 .providerId(user.getProviderId())
                 .email(user.getEmail())
                 .image(user.getImage())
-                .userRole(user.getUserRole())
+                .userRoles(new ArrayList<>())
                 .build();
     }
 }

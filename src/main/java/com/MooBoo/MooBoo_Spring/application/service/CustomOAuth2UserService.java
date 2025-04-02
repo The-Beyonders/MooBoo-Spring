@@ -1,9 +1,9 @@
 package com.MooBoo.MooBoo_Spring.application.service;
 
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
-import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.OAuth2UserInfoFactoryImpl;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
 
+import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserRole;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.UserService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2UserInfoFactory;
 import com.MooBoo.MooBoo_Spring.domain.user.User;
@@ -18,9 +18,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,14 +66,16 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             user = userService.loadUserByProviderId(providerId);
         }
 
-        String role = user.get().getUserRole().toString();
+        List<UserRole> userRoles = user.get().getUserRoles();
 
         /**
          * oAuth2User를 그대로 넘기면 인증은 되지만 권한이 없음
          * 즉, 접근 권한이 없는 사용자가 됨
          */
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(role)),
+                userRoles.stream()
+                        .map(userRole -> new SimpleGrantedAuthority(userRole.toString()))
+                        .collect(Collectors.toSet()),
                 attributes,
                 userNameAttributeName
         );
