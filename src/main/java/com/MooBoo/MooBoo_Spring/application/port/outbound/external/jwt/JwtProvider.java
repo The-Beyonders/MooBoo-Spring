@@ -1,10 +1,12 @@
 package com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt;
 
+import com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt.dto.CreateAccessToken;
+
 import java.util.List;
 
 public interface JwtProvider {
 
-    String createAccessToken(String userId, List<String> roles);
+    String createAccessToken(CreateAccessToken createAccessTokengi);
 
     String createRefreshToken(String userId);
 

@@ -1,5 +1,6 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt;
 
+import com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt.dto.CreateAccessToken;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.common.RefreshTokenGenerator;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
@@ -42,12 +43,13 @@ public class JwtProviderImpl implements JwtProvider {
     private long refreshTokenValidity;
 
     @Override
-    public String createAccessToken(String userId, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(userId);
-        claims.put("roles", roles);
+    public String createAccessToken(CreateAccessToken createAccessToken) {
+        Claims claims = Jwts.claims().setSubject(createAccessToken.getUserId());
+        claims.put("roles", createAccessToken.getRoles());
+        // FIXME 카카오톡 이름 그대로 노출되므로 변경 필요 (개인정보보호)
+        claims.put("nickname", createAccessToken.getNickName());
 
         return Jwts.builder()
-                .setSubject(userId)
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
@@ -59,7 +61,7 @@ public class JwtProviderImpl implements JwtProvider {
     public String createRefreshToken(String userId) {
         // 오페이크 토큰 생성
         String refreshToken = refreshTokenGenerator.createOpaqueToken();
-        refreshTokenRepository.saveRefreshToken(RefreshToken.to(new CreateRefreshToken(refreshToken, userId, System.currentTimeMillis() + refreshTokenValidity)));
+        refreshTokenRepository.saveRefreshToken(RefreshToken.to(CreateRefreshToken.create(userId, refreshToken , System.currentTimeMillis() + refreshTokenValidity)));
 
         return refreshToken;
     }
