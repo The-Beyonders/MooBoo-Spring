@@ -130,11 +130,15 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException | IllegalArgumentException exception) {
+            throw new IllegalStateException("JWT 토큰이 유효하지 않습니다.");
+        }
     }
 
     private Key getKey() {

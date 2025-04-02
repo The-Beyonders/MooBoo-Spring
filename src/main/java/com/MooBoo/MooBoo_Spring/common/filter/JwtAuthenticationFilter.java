@@ -40,11 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = extractAccessToken(request);
         TokenStatus tokenStatus = jwtProvider.validateToken(accessToken);
 
-        if (accessToken != null && tokenStatus == TokenStatus.VALID) {
+        if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.VALID) {
             Authentication authentication = jwtProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } else if (accessToken != null && tokenStatus == TokenStatus.EXPIRED) {
+        } else if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.EXPIRED) {
             String refreshToken = extractRefreshToken(request);
 
             Optional<RefreshToken> result = refreshTokenService.find(refreshToken);
