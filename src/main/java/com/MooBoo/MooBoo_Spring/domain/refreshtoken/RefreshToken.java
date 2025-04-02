@@ -4,6 +4,7 @@ import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.Refres
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
 import lombok.*;
 
+
 @Builder
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,5 +31,12 @@ public class RefreshToken {
                 .userId(refreshTokenEntity.getUserId())
                 .expiresAt(refreshTokenEntity.getExpiresAt())
                 .build();
+    }
+
+    //== 비즈니스 로직 ==//
+    public boolean validate(String refreshToken) {
+        if(this.getOpaqueToken().equals(refreshToken) && System.currentTimeMillis() <= this.getExpiresAt())
+            return true;
+        return false;
     }
 }

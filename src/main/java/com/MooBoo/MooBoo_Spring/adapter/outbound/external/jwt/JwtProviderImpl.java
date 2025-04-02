@@ -1,20 +1,22 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt;
 
-import com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt.dto.CreateAccessToken;
+
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.common.RefreshTokenGenerator;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
-import com.MooBoo.MooBoo_Spring.application.port.outbound.persistence.RefreshTokenRepository;
-import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
+import com.MooBoo.MooBoo_Spring.domain.TokenStatus;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -44,11 +46,11 @@ public class JwtProviderImpl implements JwtProvider {
     private long refreshTokenValidity;
 
     @Override
-    public String createAccessToken(CreateAccessToken createAccessToken) {
-        Claims claims = Jwts.claims().setSubject(createAccessToken.getUserId());
-        claims.put("roles", createAccessToken.getRoles());
+    public String createAccessToken(String userId, List<String> roles, String nickName) {
+        Claims claims = Jwts.claims().setSubject(userId);
+        claims.put("roles", roles);
         // FIXME 카카오톡 이름 그대로 노출되므로 변경 필요 (개인정보보호)
-        claims.put("nickname", createAccessToken.getNickName());
+        claims.put("nickname", nickName);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -67,35 +69,72 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public boolean validateToken(String token) {
+    public TokenStatus validateToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(getKey())     // 서명 검증에 사용할 키 설정
                     .build()
                     .parseClaimsJws(token);      // JWT 파싱 및 서명 검증 수행
-            return true;
-        } catch (JwtException | IllegalArgumentException exception) {
-            return false;
+            return TokenStatus.VALID;
+        } catch (ExpiredJwtException e) {
+            return TokenStatus.EXPIRED;
+        } catch (JwtException | IllegalArgumentException e) {
+            return TokenStatus.INVALID;
         }
     }
 
     @Override
     public String getUserId(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
+        return getClaims(token)
                 .getSubject();
     }
 
     @Override
     public List<String> getRoles(String token) {
+        List<?> temp = getClaims(token)
+                .get("roles", List.class);
+
+        return temp.stream()
+                .map(Object::toString)
+                .toList();
+    }
+
+    @Override
+    public String getNickName(String token) {
+        return getClaims(token)
+                .get("nickname", String.class);
+    }
+
+    @Override
+    public Authentication getAuthentication(String token) {
+        Claims claims = getClaims(token);
+        String userId = claims.getSubject();
+
+        /**
+         * JWT 파싱할 때 Java의 제네릭 타입 정보는 런타임에 보존되지 않음
+         * claims.get() -> List<String>을 보장하지 않음
+         */
+        List<String> roles = ((List<?>) claims.get("roles", List.class)).stream()
+                .map(Object::toString)
+                .toList();
+
+        List<? extends GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+        /**
+         * JWT 기반 인증에서는 Spring Security가 기대하는 인증 객체가
+         * UsernamePasswordAuthenticationToken 이기 때문에
+         * OAuth2AuthenticationToken을 반환하지 않는다.
+         */
+        return new UsernamePasswordAuthenticationToken(userId, null, authorities);
+    }
+
+    private Claims getClaims(String token) {
         return Jwts.parserBuilder()
+                .setSigningKey(getKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .get("roles", List.class);
+                .getBody();
     }
 
     private Key getKey() {

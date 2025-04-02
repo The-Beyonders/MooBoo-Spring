@@ -48,8 +48,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .map(authority -> authority.toString())
                 .collect(Collectors.toList());
 
-        CreateAccessToken createAccessToken = null;
-
+        String nickName = null;
         // OAuth2 인증인 경우
         if(authentication instanceof OAuth2AuthenticationToken oauth2Token){
             String registrationId = oauth2Token.getAuthorizedClientRegistrationId();
@@ -61,10 +60,10 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             String userNameAttributeName = getUserNameAttributeName(registrationId);
             OAuth2UserInfo oAuthUserInfo = oAuth2SuccessUserInfoFactory.getOAuthUserInfo(registrationId, userNameAttributeName, attributes);
 
-            createAccessToken = CreateAccessToken.to(userId, roles, oAuthUserInfo);
+            nickName = oAuthUserInfo.getUserName();
         }
 
-        String accessToken = jwtProvider.createAccessToken(createAccessToken);
+        String accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
