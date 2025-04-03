@@ -1,6 +1,7 @@
 package com.MooBoo.MooBoo_Spring.adapter.inbound.api.login;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2SuccessUserInfoFactory;
 
@@ -33,9 +34,9 @@ import java.util.stream.Collectors;
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
     private final OAuth2SuccessUserInfoFactory oAuth2SuccessUserInfoFactory;
     private final ClientRegistrationRepository clientRegistrationRepository;
-
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -63,6 +64,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
 
         String accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
+
+        refreshTokenService.deleteRefreshToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);

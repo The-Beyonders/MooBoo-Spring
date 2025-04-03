@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,5 +27,16 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     public void saveRefreshToken(RefreshToken refreshToken) {
         RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.to(refreshToken);
         em.persist(refreshTokenEntity);
+    }
+
+    @Override
+    public void delete(String userId) {
+        List<RefreshTokenEntity> result = em.createQuery(" select rt from RefreshTokenEntity rt " +
+                        " where rt.userId =: userId ", RefreshTokenEntity.class)
+                .setParameter("userId", userId)
+                .getResultList();
+        if (!result.isEmpty()) {
+            result.forEach(refreshTokenEntity -> em.remove(refreshTokenEntity));
+        }
     }
 }

@@ -8,4 +8,6 @@ public interface RefreshTokenRepository {
     Optional<RefreshToken> findByOpaqueToken(String opaqueToken);
 
     void saveRefreshToken(RefreshToken refreshToken);
+
+    void delete(String userId);
 }

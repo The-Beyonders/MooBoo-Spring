@@ -10,4 +10,5 @@ public interface RefreshTokenService {
 
     void save(CreateRefreshToken createRefreshToken);
 
+    void deleteRefreshToken(String userId);
 }
