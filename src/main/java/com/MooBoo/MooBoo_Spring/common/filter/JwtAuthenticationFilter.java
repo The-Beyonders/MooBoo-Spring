@@ -65,19 +65,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             redirectToLogin(response);
             return;
         }
-        // 계속 진행
         filterChain.doFilter(request, response);
     }
 
     private static void redirectToLogin(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.getWriter().write("""
-        {
-          "message": "인증 필요",
-          "code": "Unauthorized"
-        }
-        """);
+        response.sendRedirect("/oauth2/authorization/kakao");
     }
 
     private String extractAccessToken(HttpServletRequest request) {
