@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 /**
  * 요청이 들어오면 해당 필터가 요청을 가로채 토큰 검증
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -38,31 +40,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = extractAccessToken(request);
         TokenStatus tokenStatus = jwtProvider.validateToken(accessToken);
 
+        log.info("사용자가 헤더에 전송한 accessToken 토큰 :" + accessToken);
         if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.VALID) {
+            log.info("토큰 유효");
             Authentication authentication = jwtProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("유효 authentication-principal: "+ authentication.getPrincipal());
+            log.info("유효 authentication-authorities: "+ authentication.getAuthorities());
+            log.info(SecurityContextHolder.getContext().toString());
 
         } else if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.EXPIRED) {
+            log.info("토큰 기간 만료");
             String refreshToken = extractRefreshToken(request);
 
             Optional<RefreshTokenDto> result = refreshTokenService.find(refreshToken);
             String userId = jwtProvider.getUserId(accessToken);
 
+            log.info("사용자가 쿠키에 전송한 RefreshToken: " + refreshToken);
             if (refreshToken != null && !result.isEmpty() && !result.isEmpty() && userId.equals(result.get().getUserId())) {
                 List<String> roles = jwtProvider.getRoles(accessToken);
                 String nickName = jwtProvider.getNickName(accessToken);
                 accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
 
+                log.info("AccessToken userId: " + userId);
+                log.info("AccessToken nickName: " + nickName);
+                log.info("AccessToken roles: " + roles);
+
+                log.info("재발급한 AccessToken: " + accessToken);
+
                 Authentication authentication = jwtProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
+                log.info("재발급 후, authentication-principal: "+ authentication.getPrincipal());
+                log.info("재발급 후, authentication-principal: "+ authentication.getAuthorities());
+                log.info(SecurityContextHolder.getContext().toString());
+
                 response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
             } else {
+                log.info("리프래시에 문제 발생 // 없음 or 유저 불일치");
                 redirectToLogin(response);
                 return;
             }
 
         } else {
+            log.info("유효하지 않은 AccessToken");
             redirectToLogin(response);
             return;
         }

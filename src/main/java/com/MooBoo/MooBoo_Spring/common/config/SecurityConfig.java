@@ -3,6 +3,7 @@ package com.MooBoo.MooBoo_Spring.common.config;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.CustomOAuth2SuccessHandler;
 import com.MooBoo.MooBoo_Spring.application.service.CustomOAuth2UserService;
 import com.MooBoo.MooBoo_Spring.common.filter.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,16 +43,29 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/oauth2/**", "/error").permitAll()
-                        .requestMatchers("/api/v1/**").hasRole("USER")
+                        .requestMatchers("/api/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
                         .successHandler(customOAuth2SuccessHandler)
+                );
+
+        http
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"message\": \"Authentication required\"}");
+                        })g
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"message\": \"No access permission\"}");
+                        })
                 );
 
         http

@@ -4,7 +4,6 @@ import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.Cr
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.persistence.RefreshTokenRepository;
-import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

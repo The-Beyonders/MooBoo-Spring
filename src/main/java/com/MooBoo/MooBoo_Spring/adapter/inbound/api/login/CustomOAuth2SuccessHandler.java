@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -40,7 +42,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
         String userId = authentication.getName();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -64,9 +65,10 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
 
         String accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
-
-        refreshTokenService.deleteRefreshToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
+
+        log.info("로그인 AccessToken 발급: "+ accessToken);
+        log.info("로그인 RefreshToken 발급: "+ refreshToken);
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         response.addHeader(HttpHeaders.SET_COOKIE,
