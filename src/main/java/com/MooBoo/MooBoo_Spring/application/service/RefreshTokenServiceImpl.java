@@ -1,6 +1,7 @@
 package com.MooBoo.MooBoo_Spring.application.service;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
+import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.persistence.RefreshTokenRepository;
 import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
@@ -18,19 +19,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public Optional<RefreshToken> find(String opaqueToken) {
+    public Optional<RefreshTokenDto> find(String opaqueToken) {
         return refreshTokenRepository.findByOpaqueToken(opaqueToken);
     }
 
     @Override
     @Transactional
     public void save(CreateRefreshToken createRefreshToken) {
-        refreshTokenRepository.saveRefreshToken(RefreshToken.to(createRefreshToken));
-    }
-
-    @Override
-    @Transactional
-    public void deleteRefreshToken(String userId) {
-        refreshTokenRepository.delete(userId);
+        refreshTokenRepository.saveRefreshToken(RefreshTokenDto.to(createRefreshToken));
     }
 }
