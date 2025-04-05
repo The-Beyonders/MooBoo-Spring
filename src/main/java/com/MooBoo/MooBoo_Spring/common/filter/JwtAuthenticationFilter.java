@@ -1,9 +1,9 @@
 package com.MooBoo.MooBoo_Spring.common.filter;
 
+import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.domain.TokenStatus;
-import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,9 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.EXPIRED) {
             String refreshToken = extractRefreshToken(request);
 
-            Optional<RefreshToken> result = refreshTokenService.find(refreshToken);
-            if (refreshToken != null && !result.isEmpty() && result.get().validate(refreshToken)) {
-                String userId = jwtProvider.getUserId(accessToken);
+            Optional<RefreshTokenDto> result = refreshTokenService.find(refreshToken);
+            String userId = jwtProvider.getUserId(accessToken);
+
+            if (refreshToken != null && !result.isEmpty() && !result.isEmpty() && userId.equals(result.get().getUserId())) {
                 List<String> roles = jwtProvider.getRoles(accessToken);
                 String nickName = jwtProvider.getNickName(accessToken);
                 accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
@@ -69,7 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private static void redirectToLogin(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/oauth2/authorization/kakao");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"message\": \"Unauthorized or Token Expired\"}");
     }
 
     private String extractAccessToken(HttpServletRequest request) {
