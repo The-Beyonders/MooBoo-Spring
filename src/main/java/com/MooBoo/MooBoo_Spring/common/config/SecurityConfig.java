@@ -60,7 +60,7 @@ public class SecurityConfig {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
                             response.setContentType("application/json");
                             response.getWriter().write("{\"message\": \"Authentication required\"}");
-                        })g
+                        })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
                             response.setContentType("application/json");
