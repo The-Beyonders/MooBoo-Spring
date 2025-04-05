@@ -8,6 +8,7 @@ import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.UserService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2ServiceUserInfoFactory;
 import com.MooBoo.MooBoo_Spring.domain.user.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -66,6 +68,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
 
         List<UserRole> userRoles = user.get().getUserRoles();
+        log.info("CustomOAuth2UserService 사용자 접근 권한 목록: "+ userRoles);
 
         /**
          * oAuth2User를 그대로 넘기면 인증은 되지만 권한이 없음

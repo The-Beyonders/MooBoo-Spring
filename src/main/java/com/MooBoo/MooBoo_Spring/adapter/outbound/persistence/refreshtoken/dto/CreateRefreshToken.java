@@ -10,13 +10,11 @@ import lombok.Data;
 public class CreateRefreshToken {
     private String userId;
     private String opaqueToken;
-    private Long expiresAt;
 
-    public static CreateRefreshToken create(String userId, String opaqueToken, Long expiresAt) {
+    public static CreateRefreshToken create(String userId, String opaqueToken) {
         return CreateRefreshToken.builder()
                 .userId(userId)
                 .opaqueToken(opaqueToken)
-                .expiresAt(expiresAt)
                 .build();
     }
 }

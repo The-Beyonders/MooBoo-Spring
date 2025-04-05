@@ -11,6 +11,7 @@ import io.jsonwebtoken.security.Keys;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ import java.util.List;
  * 서명 검증
  * 토큰에서 사용자 ID, 클레임 추출
  */
+@Slf4j
 @Setter
 @Component
 @RequiredArgsConstructor
@@ -63,7 +65,7 @@ public class JwtProviderImpl implements JwtProvider {
     public String createRefreshToken(String userId) {
         // 오페이크 토큰 생성
         String refreshToken = refreshTokenGenerator.createOpaqueToken();
-        refreshTokenService.save(CreateRefreshToken.create(userId, refreshToken , System.currentTimeMillis() + refreshTokenValidity));
+        refreshTokenService.save(CreateRefreshToken.create(userId, refreshToken));
         return refreshToken;
     }
 
@@ -135,8 +137,9 @@ public class JwtProviderImpl implements JwtProvider {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (JwtException | IllegalArgumentException exception) {
-            throw new IllegalStateException("JWT 토큰이 유효하지 않습니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("AccessToken 만료");
+            return e.getClaims();
         }
     }
 

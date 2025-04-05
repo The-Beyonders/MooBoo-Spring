@@ -1,13 +1,12 @@
 package com.MooBoo.MooBoo_Spring.application.port.outbound.persistence;
 
-import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
+import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
 
 import java.util.Optional;
 
 public interface RefreshTokenRepository {
-    Optional<RefreshToken> findByOpaqueToken(String opaqueToken);
+    Optional<RefreshTokenDto> findByOpaqueToken(String opaqueToken);
 
-    void saveRefreshToken(RefreshToken refreshToken);
+    void saveRefreshToken(RefreshTokenDto refreshTokenDto);
 
-    void delete(String userId);
 }

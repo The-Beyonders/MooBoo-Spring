@@ -85,7 +85,7 @@ public class User {
                 .providerId(createOAuth2User.getProviderId())
                 .userRoles(new ArrayList<>())
                 .build();
-        user.getUserRoles().add(UserRole.ROLE_USER);
+        user.getUserRoles().add(UserRole.USER);
         return user;
     }
 }
