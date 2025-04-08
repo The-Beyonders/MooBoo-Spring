@@ -13,6 +13,6 @@ public interface RefreshTokenRepository {
 
     void deleteRefreshToken(String uuid);
 
-    void deleteUUID(String uuid);
+    void deleteUUID(String userId);
 
 }

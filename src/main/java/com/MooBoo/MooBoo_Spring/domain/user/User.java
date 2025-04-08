@@ -1,6 +1,6 @@
 package com.MooBoo.MooBoo_Spring.domain.user;
 
-import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.dto.CreateOAuth2User;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserEntity;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserRole;
 import lombok.*;
