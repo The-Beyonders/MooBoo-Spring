@@ -1,6 +1,5 @@
 package com.MooBoo.MooBoo_Spring.common.filter;
 
-import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
 import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.domain.TokenStatus;
@@ -52,15 +51,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.EXPIRED) {
             log.info("토큰 기간 만료");
             String refreshToken = extractRefreshToken(request);
-
-            Optional<RefreshTokenDto> result = refreshTokenService.find(refreshToken);
             String userId = jwtProvider.getUserId(accessToken);
+            String uuid = jwtProvider.getUUID(accessToken);
+
+            Optional<String> result = refreshTokenService.find(userId, uuid);
 
             log.info("사용자가 쿠키에 전송한 RefreshToken: " + refreshToken);
-            if (refreshToken != null && !result.isEmpty() && !result.isEmpty() && userId.equals(result.get().getUserId())) {
+            if (refreshToken != null && !result.isEmpty()) {
                 List<String> roles = jwtProvider.getRoles(accessToken);
                 String nickName = jwtProvider.getNickName(accessToken);
-                accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
+                accessToken = jwtProvider.createAccessToken(userId, roles, nickName, uuid);
 
                 log.info("AccessToken userId: " + userId);
                 log.info("AccessToken nickName: " + nickName);
@@ -77,13 +77,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
             } else {
-                log.warn("리프래시에 문제 발생 // 없음 or 유저 불일치");
+                log.error("리프래시에 문제 발생 // 없음 or 유저 불일치");
                 respondInvalidToken(response);
                 return;
             }
 
         } else {
-            log.warn("유효하지 않은 AccessToken");
+            log.error("유효하지 않은 AccessToken");
             respondInvalidToken(response);
             return;
         }
