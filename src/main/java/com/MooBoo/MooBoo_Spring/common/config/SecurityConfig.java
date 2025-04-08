@@ -42,7 +42,7 @@ public class SecurityConfig {
          */
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/oauth2/**", "/error").permitAll()
+                        .requestMatchers("/", "/oauth2/**", "/error", "/api/**/books-search","/api/**/books-search/**").permitAll()
                         .requestMatchers("/api/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
@@ -52,20 +52,6 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService)
                         )
                         .successHandler(customOAuth2SuccessHandler)
-                );
-
-        http
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"message\": \"Authentication required\"}");
-                        })
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"message\": \"No access permission\"}");
-                        })
                 );
 
         http
