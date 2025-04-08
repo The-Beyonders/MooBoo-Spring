@@ -72,25 +72,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 log.info("재발급 후, authentication-principal: "+ authentication.getPrincipal());
-                log.info("재발급 후, authentication-principal: "+ authentication.getAuthorities());
+                log.info("재발급 후, authentication-authorities: "+ authentication.getAuthorities());
                 log.info(SecurityContextHolder.getContext().toString());
 
                 response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
             } else {
-                log.info("리프래시에 문제 발생 // 없음 or 유저 불일치");
-                redirectToLogin(response);
+                log.warn("리프래시에 문제 발생 // 없음 or 유저 불일치");
+                respondInvalidToken(response);
                 return;
             }
 
         } else {
-            log.info("유효하지 않은 AccessToken");
-            redirectToLogin(response);
+            log.warn("유효하지 않은 AccessToken");
+            respondInvalidToken(response);
             return;
         }
         filterChain.doFilter(request, response);
     }
 
-    private static void redirectToLogin(HttpServletResponse response) throws IOException {
+    private static void respondInvalidToken(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.getWriter().write("{\"message\": \"Unauthorized or Token Expired\"}");
