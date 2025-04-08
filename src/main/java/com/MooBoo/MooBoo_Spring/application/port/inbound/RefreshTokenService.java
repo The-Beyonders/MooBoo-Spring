@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi;
+package com.MooBoo.MooBoo_Spring.application.port.inbound;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
 

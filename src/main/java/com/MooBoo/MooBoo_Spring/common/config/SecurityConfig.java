@@ -1,9 +1,8 @@
 package com.MooBoo.MooBoo_Spring.common.config;
 
-import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.CustomOAuth2SuccessHandler;
-import com.MooBoo.MooBoo_Spring.application.service.CustomOAuth2UserService;
-import com.MooBoo.MooBoo_Spring.common.filter.JwtAuthenticationFilter;
-import jakarta.servlet.http.HttpServletResponse;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.CustomOAuth2SuccessHandler;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.CustomOAuth2UserService;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

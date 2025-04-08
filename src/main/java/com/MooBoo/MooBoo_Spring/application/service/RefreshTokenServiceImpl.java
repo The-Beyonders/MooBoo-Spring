@@ -2,7 +2,7 @@ package com.MooBoo.MooBoo_Spring.application.service;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.persistence.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

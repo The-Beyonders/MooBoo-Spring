@@ -1,6 +1,6 @@
-package com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi;
+package com.MooBoo.MooBoo_Spring.application.port.inbound;
 
-import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.dto.CreateOAuth2User;
 import com.MooBoo.MooBoo_Spring.domain.user.User;
 import org.springframework.stereotype.Service;
 

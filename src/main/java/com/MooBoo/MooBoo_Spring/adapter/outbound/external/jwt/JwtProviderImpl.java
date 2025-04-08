@@ -1,7 +1,7 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.common.RefreshTokenGenerator;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 
@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * AccessToken 생성하기

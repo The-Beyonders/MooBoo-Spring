@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

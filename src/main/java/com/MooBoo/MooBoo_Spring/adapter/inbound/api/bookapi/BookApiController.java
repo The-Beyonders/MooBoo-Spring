@@ -1,7 +1,7 @@
 package com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi;
 
 import com.MooBoo.MooBoo_Spring.adapter.dto.Result;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.BookApiService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.BookApiService;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.BookSearchResponse;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.SearchParam;
 import lombok.RequiredArgsConstructor;

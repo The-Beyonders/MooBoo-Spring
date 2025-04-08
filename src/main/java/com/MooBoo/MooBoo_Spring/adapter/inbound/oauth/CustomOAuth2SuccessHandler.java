@@ -1,7 +1,7 @@
-package com.MooBoo.MooBoo_Spring.adapter.inbound.api.login;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.oauth;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2SuccessUserInfoFactory;
 

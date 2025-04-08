@@ -1,4 +1,4 @@
-package com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi;
+package com.MooBoo.MooBoo_Spring.application.port.inbound;
 
 import com.MooBoo.MooBoo_Spring.domain.bookapi.BookApi;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.SearchParam;

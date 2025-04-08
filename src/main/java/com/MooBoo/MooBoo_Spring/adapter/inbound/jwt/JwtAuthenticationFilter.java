@@ -1,6 +1,6 @@
-package com.MooBoo.MooBoo_Spring.common.filter;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.jwt;
 
-import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.domain.TokenStatus;
 

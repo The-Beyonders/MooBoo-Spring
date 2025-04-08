@@ -1,10 +1,10 @@
-package com.MooBoo.MooBoo_Spring.application.service;
+package com.MooBoo.MooBoo_Spring.adapter.inbound.oauth;
 
-import com.MooBoo.MooBoo_Spring.adapter.inbound.api.login.dto.CreateOAuth2User;
+import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.dto.CreateOAuth2User;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.user.UserRole;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi.UserService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.UserService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2ServiceUserInfoFactory;
 import com.MooBoo.MooBoo_Spring.domain.user.User;
 import lombok.RequiredArgsConstructor;
