@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -64,8 +65,12 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             nickName = oAuthUserInfo.getUserName();
         }
 
-        String accessToken = jwtProvider.createAccessToken(userId, roles, nickName);
-        String refreshToken = jwtProvider.createRefreshToken(userId);
+        String uuid = UUID.randomUUID().toString();
+
+        // refresh 토큰이 존재하면 제거하기 위함
+        refreshTokenService.find(userId, uuid);
+        String accessToken = jwtProvider.createAccessToken(userId, roles, nickName, uuid);
+        String refreshToken = jwtProvider.createRefreshToken(userId, uuid);
 
         log.info("로그인 AccessToken 발급: "+ accessToken);
         log.info("로그인 RefreshToken 발급: "+ refreshToken);

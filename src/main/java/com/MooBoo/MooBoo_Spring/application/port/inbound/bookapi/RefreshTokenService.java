@@ -1,13 +1,11 @@
 package com.MooBoo.MooBoo_Spring.application.port.inbound.bookapi;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
-import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.RefreshTokenDto;
-import com.MooBoo.MooBoo_Spring.domain.refreshtoken.RefreshToken;
 
 import java.util.Optional;
 
 public interface RefreshTokenService {
-    Optional<RefreshTokenDto> find(String opaqueToken);
+    Optional<String> find(String userId, String uuid);
 
     void save(CreateRefreshToken createRefreshToken);
 

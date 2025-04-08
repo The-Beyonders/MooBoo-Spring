@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * AccessToken 생성하기
@@ -43,15 +44,14 @@ public class JwtProviderImpl implements JwtProvider {
     private String secretKey;
     @Value("${jwt.access-token-validity}")
     private long accessTokenValidity;
-    @Value("${jwt.refresh-token-validity}")
-    private long refreshTokenValidity;
 
     @Override
-    public String createAccessToken(String userId, List<String> roles, String nickName) {
+    public String createAccessToken(String userId, List<String> roles, String nickName, String uuid) {
         Claims claims = Jwts.claims().setSubject(userId);
         claims.put("roles", roles);
         // FIXME 카카오톡 이름 그대로 노출되므로 변경 필요 (개인정보보호)
         claims.put("nickname", nickName);
+        claims.put("uuid", uuid);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -62,10 +62,10 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public String createRefreshToken(String userId) {
+    public String createRefreshToken(String userId, String uuid) {
         // 오페이크 토큰 생성
         String refreshToken = refreshTokenGenerator.createOpaqueToken();
-        refreshTokenService.save(CreateRefreshToken.create(userId, refreshToken));
+        refreshTokenService.save(CreateRefreshToken.create(userId, refreshToken, uuid));
         return refreshToken;
     }
 
@@ -88,6 +88,12 @@ public class JwtProviderImpl implements JwtProvider {
     public String getUserId(String token) {
         return getClaims(token)
                 .getSubject();
+    }
+
+    @Override
+    public String getUUID(String token) {
+        return getClaims(token)
+                .get("uuid", String.class);
     }
 
     @Override
