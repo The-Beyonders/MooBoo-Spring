@@ -20,6 +20,8 @@ public class RedisTokenRepositoryImpl implements TokenRepository {
     private static final String PREFIX_REFRESH_USER = "refresh:user:";
     private static final String PREFIX_REFRESH_UUID = "refresh:uuid:";
 
+    private static final String PREFIX_ACCESS_USER = "access:user:";
+
     @Value("${jwt.refresh-token-validity}")
     private long refreshTokenValidity;
 
@@ -57,5 +59,25 @@ public class RedisTokenRepositoryImpl implements TokenRepository {
     @Override
     public void deleteRefreshUUID(String userId) {
         redisOperations.delete(PREFIX_REFRESH_USER + userId);
+    }
+
+    @Override
+    public Optional<String> findAccessUUIDByUserId(String userId) {
+        String findUUID = (String) redisOperations.opsForValue().get(PREFIX_ACCESS_USER + userId);
+        return Optional.ofNullable(findUUID);
+    }
+
+    @Override
+    public void saveAccessUUID(String userId, String uuid) {
+        redisOperations.opsForValue().set(
+                PREFIX_ACCESS_USER + userId,
+                uuid,
+                refreshTokenValidity, TimeUnit.DAYS
+        );
+    }
+
+    @Override
+    public void deleteAccessUUID(String userId) {
+        redisOperations.delete(PREFIX_ACCESS_USER + userId);
     }
 }

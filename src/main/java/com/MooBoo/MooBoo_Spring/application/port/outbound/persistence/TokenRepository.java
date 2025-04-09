@@ -15,4 +15,10 @@ public interface TokenRepository {
 
     void deleteRefreshUUID(String userId);
 
+    Optional<String> findAccessUUIDByUserId(String userId);
+
+    void saveAccessUUID(String userId, String uuid);
+
+    void deleteAccessUUID(String userId);
+
 }
