@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface JwtProvider {
 
-    String createAccessToken(String userId, List<String> roles, String nickName, String uuid);
+    String createAccessToken(String userId, List<String> roles, String nickName, String refreshUUID, String accessUUID);
 
     String createRefreshToken(String userId, String uuid);
 
@@ -15,7 +15,9 @@ public interface JwtProvider {
 
     String getUserId(String token);
 
-    String getUUID(String token);
+    String getRefreshUUID(String token);
+
+    String getAccessTokenUUID(String token);
 
     List<String> getRoles(String token);
 
