@@ -1,7 +1,7 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.TokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.common.RefreshTokenGenerator;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 
@@ -37,7 +37,7 @@ import java.util.List;
 public class JwtProviderImpl implements JwtProvider {
 
     private final RefreshTokenGenerator refreshTokenGenerator;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -45,12 +45,16 @@ public class JwtProviderImpl implements JwtProvider {
     private long accessTokenValidity;
 
     @Override
-    public String createAccessToken(String userId, List<String> roles, String nickName, String uuid) {
+    public String createAccessToken(String userId, List<String> roles, String nickName, String refreshUUID, String accessUUID) {
         Claims claims = Jwts.claims().setSubject(userId);
         claims.put("roles", roles);
         // FIXME 카카오톡 이름 그대로 노출되므로 변경 필요 (개인정보보호)
         claims.put("nickname", nickName);
-        claims.put("uuid", uuid);
+        claims.put("refresh_uuid", refreshUUID);
+        claims.put("access_uuid", accessUUID);
+
+        tokenService.deleteAccessUUID(userId);
+        tokenService.saveAccessUUID(userId, accessUUID);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -64,7 +68,7 @@ public class JwtProviderImpl implements JwtProvider {
     public String createRefreshToken(String userId, String uuid) {
         // 오페이크 토큰 생성
         String refreshToken = refreshTokenGenerator.createOpaqueToken();
-        refreshTokenService.save(CreateRefreshToken.create(userId, refreshToken, uuid));
+        tokenService.saveRefreshToken(CreateRefreshToken.create(userId, refreshToken, uuid));
         return refreshToken;
     }
 
@@ -90,9 +94,15 @@ public class JwtProviderImpl implements JwtProvider {
     }
 
     @Override
-    public String getUUID(String token) {
+    public String getRefreshUUID(String token) {
         return getClaims(token)
-                .get("uuid", String.class);
+                .get("refresh_uuid", String.class);
+    }
+
+    @Override
+    public String getAccessTokenUUID(String token) {
+        return getClaims(token)
+                .get("access_uuid", String.class);
     }
 
     @Override
@@ -145,6 +155,8 @@ public class JwtProviderImpl implements JwtProvider {
         } catch (ExpiredJwtException e) {
             log.info("AccessToken 만료");
             return e.getClaims();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new IllegalStateException("변형된 토큰입니다.");
         }
     }
 
