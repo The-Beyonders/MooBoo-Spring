@@ -65,12 +65,15 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             nickName = oAuthUserInfo.getUserName();
         }
 
-        String uuid = UUID.randomUUID().toString();
+        String refreshUUID = UUID.randomUUID().toString();
+        String accessUUID = UUID.randomUUID().toString();
 
-        // refresh 토큰이 존재하면 제거하기 위함
-        tokenService.findRefreshToken(userId, uuid);
-        String accessToken = jwtProvider.createAccessToken(userId, roles, nickName, uuid);
-        String refreshToken = jwtProvider.createRefreshToken(userId, uuid);
+        // 기존 Refresh 토큰과 RefreshUUID, AccessUUID를 제거
+        tokenService.deleteRefreshTokenAndUUID(userId);
+        tokenService.deleteAccessUUID(userId);
+
+        String accessToken = jwtProvider.createAccessToken(userId, roles, nickName, refreshUUID, accessUUID);
+        String refreshToken = jwtProvider.createRefreshToken(userId, refreshUUID);
 
         log.info("로그인 AccessToken 발급: "+ accessToken);
         log.info("로그인 RefreshToken 발급: "+ refreshToken);
