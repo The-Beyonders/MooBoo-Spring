@@ -1,6 +1,6 @@
 package com.MooBoo.MooBoo_Spring.adapter.inbound.jwt;
 
-import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.TokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.domain.TokenStatus;
 
@@ -32,7 +32,7 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtProvider.getUserId(accessToken);
             String uuid = jwtProvider.getUUID(accessToken);
 
-            Optional<String> result = refreshTokenService.find(userId, uuid);
+            Optional<String> result = tokenService.findRefreshToken(userId, uuid);
 
             log.info("사용자가 쿠키에 전송한 RefreshToken: " + refreshToken);
             if (refreshToken != null && !result.isEmpty()) {

@@ -4,9 +4,9 @@ import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.Cr
 
 import java.util.Optional;
 
-public interface RefreshTokenService {
-    Optional<String> find(String userId, String uuid);
+public interface TokenService {
+    Optional<String> findRefreshToken(String userId, String uuid);
 
-    void save(CreateRefreshToken createRefreshToken);
+    void saveRefreshToken(CreateRefreshToken createRefreshToken);
 
 }

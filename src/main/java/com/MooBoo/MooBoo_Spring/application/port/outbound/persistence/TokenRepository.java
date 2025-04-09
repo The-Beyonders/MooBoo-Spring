@@ -4,8 +4,8 @@ import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.Re
 
 import java.util.Optional;
 
-public interface RefreshTokenRepository {
-    Optional<String> findUUIDByUserId(String userId);
+public interface TokenRepository {
+    Optional<String> findRefreshUUIDByUserId(String userId);
 
     Optional<String> findRefreshByUUID(String uuid);
 
@@ -13,6 +13,6 @@ public interface RefreshTokenRepository {
 
     void deleteRefreshToken(String uuid);
 
-    void deleteUUID(String userId);
+    void deleteRefreshUUID(String userId);
 
 }

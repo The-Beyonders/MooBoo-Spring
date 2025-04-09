@@ -1,7 +1,7 @@
 package com.MooBoo.MooBoo_Spring.adapter.inbound.oauth;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.TokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2SuccessUserInfoFactory;
 
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
     private final OAuth2SuccessUserInfoFactory oAuth2SuccessUserInfoFactory;
     private final ClientRegistrationRepository clientRegistrationRepository;
 
@@ -68,7 +68,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String uuid = UUID.randomUUID().toString();
 
         // refresh 토큰이 존재하면 제거하기 위함
-        refreshTokenService.find(userId, uuid);
+        tokenService.findRefreshToken(userId, uuid);
         String accessToken = jwtProvider.createAccessToken(userId, roles, nickName, uuid);
         String refreshToken = jwtProvider.createRefreshToken(userId, uuid);
 

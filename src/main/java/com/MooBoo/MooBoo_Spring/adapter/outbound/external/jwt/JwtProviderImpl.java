@@ -1,7 +1,7 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.jwt;
 
 import com.MooBoo.MooBoo_Spring.adapter.outbound.persistence.refreshtoken.dto.CreateRefreshToken;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.RefreshTokenService;
+import com.MooBoo.MooBoo_Spring.application.port.inbound.TokenService;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.common.RefreshTokenGenerator;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
 
@@ -37,7 +37,7 @@ import java.util.List;
 public class JwtProviderImpl implements JwtProvider {
 
     private final RefreshTokenGenerator refreshTokenGenerator;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -64,7 +64,7 @@ public class JwtProviderImpl implements JwtProvider {
     public String createRefreshToken(String userId, String uuid) {
         // 오페이크 토큰 생성
         String refreshToken = refreshTokenGenerator.createOpaqueToken();
-        refreshTokenService.save(CreateRefreshToken.create(userId, refreshToken, uuid));
+        tokenService.saveRefreshToken(CreateRefreshToken.create(userId, refreshToken, uuid));
         return refreshToken;
     }
 
