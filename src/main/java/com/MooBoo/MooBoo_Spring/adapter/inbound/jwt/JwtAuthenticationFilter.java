@@ -39,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = extractAccessToken(request);
-        TokenStatus tokenStatus = jwtProvider.validateToken(accessToken);
 
         if(accessToken == null || accessToken.isBlank()){
             log.info("accessToken 없음");
@@ -51,7 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessUUID = jwtProvider.getAccessTokenUUID(accessToken);
         Optional<String> resultAccess = tokenService.findAccessUUID(userId, accessUUID);
 
+        TokenStatus tokenStatus = jwtProvider.validateToken(accessToken);
         log.info("사용자가 헤더에 전송한 accessToken 토큰 :" + accessToken);
+
         if (tokenStatus == TokenStatus.VALID && !resultAccess.isEmpty()) {
             log.info("토큰 유효");
             Authentication authentication = jwtProvider.getAuthentication(accessToken);
@@ -63,21 +64,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String refreshUUID = jwtProvider.getRefreshUUID(accessToken);
 
             Optional<String> resultRefresh = tokenService.findRefreshToken(userId, refreshUUID);
-
             log.info("사용자가 쿠키에 전송한 RefreshToken: " + refreshToken);
+
             if (refreshToken != null && !resultRefresh.isEmpty()) {
                 List<String> roles = jwtProvider.getRoles(accessToken);
                 String nickName = jwtProvider.getNickName(accessToken);
 
-                accessUUID = UUID.randomUUID().toString();
-                accessToken = jwtProvider.createAccessToken(userId, roles, nickName, refreshUUID, accessUUID);
-
+                accessToken = jwtProvider.createAccessToken(userId, roles, nickName, refreshUUID);
                 log.info("재발급한 AccessToken: " + accessToken);
 
                 Authentication authentication = jwtProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
             } else {
                 log.error("리프래시에 문제 발생 // 없음 or 유저 불일치");
                 respondInvalidToken(response);

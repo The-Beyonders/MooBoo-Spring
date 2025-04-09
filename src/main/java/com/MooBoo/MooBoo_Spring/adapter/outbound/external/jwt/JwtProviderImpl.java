@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * AccessToken 생성하기
@@ -45,7 +46,8 @@ public class JwtProviderImpl implements JwtProvider {
     private long accessTokenValidity;
 
     @Override
-    public String createAccessToken(String userId, List<String> roles, String nickName, String refreshUUID, String accessUUID) {
+    public String createAccessToken(String userId, List<String> roles, String nickName, String refreshUUID) {
+        String accessUUID = UUID.randomUUID().toString();
         Claims claims = Jwts.claims().setSubject(userId);
         claims.put("roles", roles);
         // FIXME 카카오톡 이름 그대로 노출되므로 변경 필요 (개인정보보호)
