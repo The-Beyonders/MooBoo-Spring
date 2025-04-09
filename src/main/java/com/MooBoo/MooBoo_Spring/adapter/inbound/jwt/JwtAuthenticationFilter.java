@@ -19,9 +19,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 요청이 들어오면 해당 필터가 요청을 가로채 토큰 검증
@@ -39,41 +41,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = extractAccessToken(request);
         TokenStatus tokenStatus = jwtProvider.validateToken(accessToken);
 
+        if(accessToken == null || accessToken.isBlank()){
+            log.info("accessToken 없음");
+            respondInvalidToken(response);
+            return;
+        }
+
+        String userId = jwtProvider.getUserId(accessToken);
+        String accessUUID = jwtProvider.getAccessTokenUUID(accessToken);
+        Optional<String> resultAccess = tokenService.findAccessUUID(userId, accessUUID);
+
         log.info("사용자가 헤더에 전송한 accessToken 토큰 :" + accessToken);
-        if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.VALID) {
+        if (tokenStatus == TokenStatus.VALID && !resultAccess.isEmpty()) {
             log.info("토큰 유효");
             Authentication authentication = jwtProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("유효 authentication-principal: "+ authentication.getPrincipal());
-            log.info("유효 authentication-authorities: "+ authentication.getAuthorities());
-            log.info(SecurityContextHolder.getContext().toString());
 
-        } else if (accessToken != null && !accessToken.isBlank() && tokenStatus == TokenStatus.EXPIRED) {
+        } else if (tokenStatus == TokenStatus.EXPIRED && !resultAccess.isEmpty()) {
             log.info("토큰 기간 만료");
             String refreshToken = extractRefreshToken(request);
-            String userId = jwtProvider.getUserId(accessToken);
-            String uuid = jwtProvider.getUUID(accessToken);
+            String refreshUUID = jwtProvider.getRefreshUUID(accessToken);
 
-            Optional<String> result = tokenService.findRefreshToken(userId, uuid);
+            Optional<String> resultRefresh = tokenService.findRefreshToken(userId, refreshUUID);
 
             log.info("사용자가 쿠키에 전송한 RefreshToken: " + refreshToken);
-            if (refreshToken != null && !result.isEmpty()) {
+            if (refreshToken != null && !resultRefresh.isEmpty()) {
                 List<String> roles = jwtProvider.getRoles(accessToken);
                 String nickName = jwtProvider.getNickName(accessToken);
-                accessToken = jwtProvider.createAccessToken(userId, roles, nickName, uuid);
 
-                log.info("AccessToken userId: " + userId);
-                log.info("AccessToken nickName: " + nickName);
-                log.info("AccessToken roles: " + roles);
+                accessUUID = UUID.randomUUID().toString();
+                accessToken = jwtProvider.createAccessToken(userId, roles, nickName, refreshUUID, accessUUID);
 
                 log.info("재발급한 AccessToken: " + accessToken);
 
                 Authentication authentication = jwtProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                log.info("재발급 후, authentication-principal: "+ authentication.getPrincipal());
-                log.info("재발급 후, authentication-authorities: "+ authentication.getAuthorities());
-                log.info(SecurityContextHolder.getContext().toString());
 
                 response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
             } else {
