@@ -4,7 +4,7 @@ import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookApiRes
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookInfo;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookItem;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.BookSearchResponse;
-import com.MooBoo.MooBoo_Spring.domain.bookapi.BookApi;
+import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookApiDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -12,7 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookApiTest {
+public class BookApiDtoTest {
 
     @Test
     public void fromBookApiResponseTest() throws Exception {
@@ -21,16 +21,16 @@ public class BookApiTest {
         BookApiResponse bookApiResponse = getBookApiResponse();
 
         //when
-        BookApi bookApi1 = BookApi.fromBookItem(bookApiResponse.getItem().get(0));
+        BookApiDto bookApiDto1 = BookApiDto.to(bookApiResponse.getItem().get(0));
 
-        String bookApi1_isbn13 = (String) ReflectionTestUtils.getField(bookApi1, "isbn13");
-        String bookApi1_title = (String) ReflectionTestUtils.getField(bookApi1, "title");
-        String bookApi1_description = (String) ReflectionTestUtils.getField(bookApi1, "description");
-        String bookApi1_author = (String) ReflectionTestUtils.getField(bookApi1, "author");
-        String bookApi1_cover = (String) ReflectionTestUtils.getField(bookApi1, "cover");
-        String bookApi1_publisher = (String) ReflectionTestUtils.getField(bookApi1, "publisher");
-        String bookApi1_pubDate = (String) ReflectionTestUtils.getField(bookApi1, "pubDate");
-        String bookApi1_itemPage = (String) ReflectionTestUtils.getField(bookApi1, "itemPage");
+        String bookApi1_isbn13 = (String) ReflectionTestUtils.getField(bookApiDto1, "isbn13");
+        String bookApi1_title = (String) ReflectionTestUtils.getField(bookApiDto1, "title");
+        String bookApi1_description = (String) ReflectionTestUtils.getField(bookApiDto1, "description");
+        String bookApi1_author = (String) ReflectionTestUtils.getField(bookApiDto1, "author");
+        String bookApi1_cover = (String) ReflectionTestUtils.getField(bookApiDto1, "cover");
+        String bookApi1_publisher = (String) ReflectionTestUtils.getField(bookApiDto1, "publisher");
+        String bookApi1_pubDate = (String) ReflectionTestUtils.getField(bookApiDto1, "pubDate");
+        String bookApi1_itemPage = (String) ReflectionTestUtils.getField(bookApiDto1, "itemPage");
 
         //then
         Assertions.assertThat(bookApi1_isbn13).isEqualTo("9788994492049");
@@ -47,7 +47,7 @@ public class BookApiTest {
     @Test
     public void toBookSearchResponseTest() throws Exception {
         //given
-        BookApi bookApi = BookApi.builder()
+        BookApiDto bookApiDto = BookApiDto.builder()
                 .isbn13("9788994492049")
                 .title("자바의 정석")
                 .description("자바에 대한 책입니다.")
@@ -59,7 +59,7 @@ public class BookApiTest {
                 .build();
         //when
 
-        BookSearchResponse bookSearchResponse = bookApi.toBookSearchResponse();
+        BookSearchResponse bookSearchResponse = BookSearchResponse.to(bookApiDto);
 
         //then
         Assertions.assertThat(bookSearchResponse.getIsbn13()).isEqualTo("9788994492049");
