@@ -41,7 +41,7 @@ public class SecurityConfig {
          */
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/oauth2/**", "/error", "/api/**/books-search","/api/**/books-search/**").permitAll()
+                        .requestMatchers("/", "/oauth2/**", "/error", "/api/v1/books-search","/api/v1/books-search/**").permitAll()
                         .requestMatchers("/api/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
