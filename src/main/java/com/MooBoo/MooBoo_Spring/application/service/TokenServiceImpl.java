@@ -26,11 +26,7 @@ public class TokenServiceImpl implements TokenService {
 
         // UUID가 없거나 일치하지 않는 경우
         if (findUUID.isEmpty() || !uuid.equals(findUUID.get())) {
-            log.info("UUID가 없거나 UUID가 일치하지 않습니다.");
-            if (!findUUID.isEmpty()) {
-                tokenRepository.deleteRefreshToken(findUUID.get());
-            }
-            tokenRepository.deleteRefreshUUID(userId);
+            log.info("refreshUUID가 없거나 refreshUUID가 일치하지 않습니다.");
             return Optional.empty();
         }
 
@@ -41,5 +37,35 @@ public class TokenServiceImpl implements TokenService {
     @Transactional
     public void saveRefreshToken(CreateRefreshToken createRefreshToken) {
         tokenRepository.saveRefreshToken(RefreshTokenDto.to(createRefreshToken));
+    }
+
+    @Override
+    public void deleteRefreshTokenAndUUID(String userId) {
+        Optional<String> findUUID = tokenRepository.findRefreshUUIDByUserId(userId);
+        if (!findUUID.isEmpty()) {
+            tokenRepository.deleteRefreshToken(findUUID.get());
+        }
+        tokenRepository.deleteRefreshUUID(userId);
+    }
+
+    @Override
+    public Optional<String> findAccessUUID(String userId, String uuid) {
+
+        Optional<String> findUUID = tokenRepository.findAccessUUIDByUserId(userId);
+        if (findUUID.isEmpty() || !uuid.equals(findUUID.get())) {
+            log.info("accessUUID가 없거나 accessUUID가 일치하지 않습니다.");
+            return Optional.empty();
+        }
+        return findUUID;
+    }
+
+    @Override
+    public void saveAccessUUID(String userId, String uuid) {
+        tokenRepository.saveAccessUUID(userId, uuid);
+    }
+
+    @Override
+    public void deleteAccessUUID(String userId) {
+        tokenRepository.deleteAccessUUID(userId);
     }
 }
