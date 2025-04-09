@@ -1,6 +1,6 @@
 package com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi;
 
-import com.MooBoo.MooBoo_Spring.domain.bookapi.BookApi;
+import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookApiDto;
 import com.MooBoo.MooBoo_Spring.adapter.outbound.external.bookapi.dto.BookApiResponse;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.api.bookapi.dto.SearchParam;
 import com.MooBoo.MooBoo_Spring.application.port.outbound.external.bookapi.BookApiClient;
@@ -27,11 +27,11 @@ public class BookApiClientImpl implements BookApiClient {
      * 책 목록 조회를 위한 메서드
      */
     @Override
-    public Mono<List<BookApi>> getBooksBySearchParam(SearchParam searchParam)  {
+    public Mono<List<BookApiDto>> getBooksBySearchParam(SearchParam searchParam)  {
         /**
          * 구독 체인 정의
          */
-        Mono<List<BookApi>> result = bookApiClient.get().uri(uriBuilder -> uriBuilder
+        Mono<List<BookApiDto>> result = bookApiClient.get().uri(uriBuilder -> uriBuilder
                     .path("/ItemSearch.aspx")
                     .queryParam("Query", searchParam.getKeyword())
                     .queryParam("MaxResults", searchParam.getMaxResults())
@@ -49,7 +49,7 @@ public class BookApiClientImpl implements BookApiClient {
                 .bodyToMono(BookApiResponse.class)                                                      // JSON -> 객체로 변환(역직렬화)
                 .map(bookApiResponse -> bookApiResponse.getItem())
                 .map(items -> items.stream()                                              // BookItem(DTO) -> BookApi(도메인)
-                        .map(item -> BookApi.fromBookItem(item))
+                        .map(item -> BookApiDto.to(item))
                         .toList()
                 ).subscribeOn(Schedulers.boundedElastic()); // 별도의 스레드가 처리하도록 지정
 
@@ -60,8 +60,8 @@ public class BookApiClientImpl implements BookApiClient {
      * 특정 책 조회를 위한 메서드
      */
     @Override
-    public Mono<BookApi> getBookByIsbn(String isbn) {
-        Mono<BookApi> result = bookApiClient.get().uri(uriBuilder -> uriBuilder
+    public Mono<BookApiDto> getBookByIsbn(String isbn) {
+        Mono<BookApiDto> result = bookApiClient.get().uri(uriBuilder -> uriBuilder
                         .path("/ItemLookUp.aspx")
                         .queryParam("ItemIdType", "ISBN13")
                         .queryParam("ItemId", isbn)
@@ -83,8 +83,8 @@ public class BookApiClientImpl implements BookApiClient {
                     if (items.isEmpty())
                         return Mono.error(new BookApiBadRequestException("도서 정보를 찾을 수 없습니다."));
 
-                    BookApi mapped = items.stream()
-                            .map(item -> BookApi.fromBookItem(item))
+                    BookApiDto mapped = items.stream()
+                            .map(item -> BookApiDto.to(item))
                             .toList().get(0);
                     return Mono.just(mapped);
 

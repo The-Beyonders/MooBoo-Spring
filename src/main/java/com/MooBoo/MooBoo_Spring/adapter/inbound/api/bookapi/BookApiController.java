@@ -32,7 +32,7 @@ public class BookApiController {
 
         return bookApiService.searchBooks(searchParam)
                 .map(bookApis -> bookApis.stream()
-                        .map(bookApi -> bookApi.toBookSearchResponse())
+                        .map(bookApi -> BookSearchResponse.to(bookApi))
                         .toList())
                 .map(bookSearchResponses -> Result.wrapper("책 목록 조회", HttpStatus.OK, bookSearchResponses))
                 .onErrorResume(e ->
@@ -46,7 +46,7 @@ public class BookApiController {
     @GetMapping("/api/v1/books-search/{isbn}")
     public Mono<Result<BookSearchResponse>> searchBookV1(@PathVariable("isbn") String isbn) {
         return bookApiService.searchBook(isbn)
-                .map(bookApi -> Result.wrapper("책 자세히 검색", HttpStatus.OK, bookApi.toBookSearchResponse()))
+                .map(bookApi -> Result.wrapper("책 자세히 검색", HttpStatus.OK, BookSearchResponse.to(bookApi)))
                 .onErrorResume(e ->
                         Mono.just(Result.wrapper("요청 실패: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null))
                 );
