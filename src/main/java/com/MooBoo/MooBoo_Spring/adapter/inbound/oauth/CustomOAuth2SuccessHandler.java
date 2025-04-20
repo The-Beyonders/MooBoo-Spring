@@ -76,7 +76,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         log.info("로그인 AccessToken 발급: "+ accessToken);
         log.info("로그인 RefreshToken 발급: "+ refreshToken);
 
-//        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         response.addHeader(HttpHeaders.SET_COOKIE,
                 ResponseCookie
                         .from("refreshToken", refreshToken)
@@ -87,16 +87,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                         .build()
                         .toString()
         );
-        // AccessToken Body에 담아서 전송
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("""
-        {
-          "message": "%s",
-          "accessToken": "%s"
-        }
-        """.formatted("로그인 성공 및 AccessToken 발급", accessToken));
     }
 
     private String getUserNameAttributeName(String registrationId) {
