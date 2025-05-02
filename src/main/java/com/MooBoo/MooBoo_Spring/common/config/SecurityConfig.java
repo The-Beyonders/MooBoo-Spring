@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -55,6 +56,7 @@ public class SecurityConfig {
                 );
 
         http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())            // 현재 세션을 사용하지 않으므로 CSRF 위험 없음
                 .formLogin(form -> form.disable())  // 폼 로그인 사용하지 않음
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 방식 비활성화 (사용안함)
