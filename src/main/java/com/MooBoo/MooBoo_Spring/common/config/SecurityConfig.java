@@ -7,10 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -54,7 +56,11 @@ public class SecurityConfig {
                 );
 
         http
-                .csrf(csrf -> csrf.disable());
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())            // 현재 세션을 사용하지 않으므로 CSRF 위험 없음
+                .formLogin(form -> form.disable())  // 폼 로그인 사용하지 않음
+                .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 방식 비활성화 (사용안함)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 현재 세션 사용 안 함
 
         return http.build();
     }
