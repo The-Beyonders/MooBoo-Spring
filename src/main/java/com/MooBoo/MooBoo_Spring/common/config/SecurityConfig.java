@@ -2,7 +2,6 @@ package com.MooBoo.MooBoo_Spring.common.config;
 
 import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.CustomOAuth2SuccessHandler;
 import com.MooBoo.MooBoo_Spring.adapter.inbound.oauth.CustomOAuth2UserService;
-import com.MooBoo.MooBoo_Spring.adapter.inbound.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +22,6 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -47,7 +44,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
@@ -57,10 +53,10 @@ public class SecurityConfig {
 
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())            // 현재 세션을 사용하지 않으므로 CSRF 위험 없음
+                .csrf(Customizer.withDefaults())
                 .formLogin(form -> form.disable())  // 폼 로그인 사용하지 않음
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 방식 비활성화 (사용안함)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 현재 세션 사용 안 함
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)); // 세션이 필요할 때만 생성
 
         return http.build();
     }

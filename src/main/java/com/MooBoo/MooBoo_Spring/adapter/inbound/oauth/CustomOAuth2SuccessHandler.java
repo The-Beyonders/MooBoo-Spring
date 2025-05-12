@@ -1,106 +1,55 @@
 package com.MooBoo.MooBoo_Spring.adapter.inbound.oauth;
 
-import com.MooBoo.MooBoo_Spring.adapter.outbound.external.oauth.dto.OAuth2UserInfo;
-import com.MooBoo.MooBoo_Spring.application.port.inbound.TokenService;
-import com.MooBoo.MooBoo_Spring.application.port.outbound.external.jwt.JwtProvider;
-import com.MooBoo.MooBoo_Spring.application.port.outbound.external.oauth.OAuth2SuccessUserInfoFactory;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtProvider jwtProvider;
-    private final TokenService tokenService;
-    private final OAuth2SuccessUserInfoFactory oAuth2SuccessUserInfoFactory;
-    private final ClientRegistrationRepository clientRegistrationRepository;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String userId = authentication.getName();
+        HttpSession session = request.getSession(true);
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        List<String> roles = authorities.stream()
-                .map(authority -> authority.toString())
-                .collect(Collectors.toList());
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-        String nickName = null;
-        // OAuth2 인증인 경우
-        if(authentication instanceof OAuth2AuthenticationToken oauth2Token){
-            String registrationId = oauth2Token.getAuthorizedClientRegistrationId();
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-            Map<String, Object> attributes  = ((OAuth2User) authentication
-                    .getPrincipal())
-                    .getAttributes();
-
-            String userNameAttributeName = getUserNameAttributeName(registrationId);
-            OAuth2UserInfo oAuthUserInfo = oAuth2SuccessUserInfoFactory.getOAuthUserInfo(registrationId, userNameAttributeName, attributes);
-
-            nickName = oAuthUserInfo.getUserName();
+        // 예시로 응답 보낼 JSON 구조 만들기
+        String json = """
+        {
+            "message": "Login success",
+            "user": {
+                "name": "%s"
+            }
         }
-        String refreshUUID = UUID.randomUUID().toString();
-
-        // 기존 Refresh 토큰과 RefreshUUID, AccessUUID를 제거
-        tokenService.deleteRefreshTokenAndUUID(userId);
-        tokenService.deleteAccessUUID(userId);
-
-        String accessToken = jwtProvider.createAccessToken(userId, roles, nickName, refreshUUID);
-        String refreshToken = jwtProvider.createRefreshToken(userId, refreshUUID);
-
-        log.info("로그인 AccessToken 발급: "+ accessToken);
-        log.info("로그인 RefreshToken 발급: "+ refreshToken);
-
-        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        response.addHeader(HttpHeaders.SET_COOKIE,
-                ResponseCookie
-                        .from("refreshToken", refreshToken)
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/")
-                        .maxAge(Duration.ofDays(1))
-                        .build()
-                        .toString()
+        """.formatted(
+                authentication.getName(),
+                authentication.getAuthorities().toString()
         );
-    }
 
-    private String getUserNameAttributeName(String registrationId) {
-        // ClientRegistration 꺼내기
-        ClientRegistration clientRegistration =
-                ((InMemoryClientRegistrationRepository) clientRegistrationRepository)
-                        .findByRegistrationId(registrationId);
+        // 응답 출력
+        response.getWriter().write(json);
 
-        // 고유 식별자 키 꺼내기
-        String userNameAttributeName = clientRegistration
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
-
-        return userNameAttributeName;
     }
 }
